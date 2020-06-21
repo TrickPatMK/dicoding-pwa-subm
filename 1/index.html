@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <title></title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="css/materialize.min.css">
+</head>
+<body>
+    <!-- Navigasi -->
+    <nav class="teal lighten-1" role="navigation">
+        <div class="nav-wrapper container">
+            <a href="#" class="brand-logo" id="logo-container">Logo later</a>
+            <a href="#" class="sidenav-trigger" data-target="navbar-mobile">☰</a>
+
+            <ul class="topnav right hide-on-med-and-down"></ul>
+            <ul class="sidenav" id="nav-mobile"></ul>
+        </div>
+    </nav>
+
+    <!-- Body Content -->
+    <div class="container" id="body-content"></div>
+
+    <script src="js/materialize.min.js"></script>
+    <script src="js/nav.js"></script>
+    <script>
+        // REGISTER SERVICE WORKER
+        if("serviceWorker" in navigator){
+            window.addEventListener("load", () => {
+                navigator.serviceWorker.register("/service-worker.js")
+                .then(() => {
+                    console.log("Pendaftaran ServiceWorker Berhasil!");
+                })
+                .catch(() => {
+                    console.log("Pendaftaran ServiceWorker Gagal!");
+                });
+            });
+        } else {
+            console.log("ServiceWorker belum didukung browser ini!");
+        }
+    </script>
+</body>
+</html>
