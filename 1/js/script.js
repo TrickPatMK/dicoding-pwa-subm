@@ -52,7 +52,7 @@ document.addEventListener("DOMContentLoaded", function(){
                         const slider = document.querySelectorAll(".slider");
                         M.Slider.init(slider, {
                             indicators: false,
-                            height: 200,
+                            height: 300,
                             duration: 600,
                             interval: 3000
                         });

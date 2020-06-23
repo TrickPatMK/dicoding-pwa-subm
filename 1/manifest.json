@@ -1,0 +1,22 @@
+{
+   "name": "Alam Kita",
+   "short_name": "Alta",
+   "description": "Aplikasi untuk mendekatkan para pecinta alam dengan lingkungannya",
+   "start_url": "/index.html",
+   "theme_color": "#388E3C",
+   "display": "standalone",
+   "background_color": "#81C784",
+   "orientation": "portrait",
+   "icons": [
+      {
+         "src":"/images/icon192.png",
+         "sizes": "192x192",
+         "type": "image/png"
+      }, 
+      {
+           "src": "/images/icon.png",
+           "sizes": "512x512",
+           "type": "image/png"
+       }
+   ] 
+}
