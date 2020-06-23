@@ -10,7 +10,6 @@ document.addEventListener("DOMContentLoaded", function(){
     if(page == "") page = "home"; 
     loadPage(page);
 
-
     function loadNav(){
         const xhttp = new XMLHttpRequest();
         xhttp.onreadystatechange = function(){
@@ -57,6 +56,13 @@ document.addEventListener("DOMContentLoaded", function(){
                             duration: 600,
                             interval: 3000
                         });
+                    } else if(page == 'flora' || page == 'fauna'){
+                        // Toast setup
+                        document.querySelectorAll(".toast-trigger").forEach(elm => {
+                            elm.addEventListener("click", toast => {
+                                toast = M.toast({html: 'menambahkan ke favorit!', displayLength: 2000});
+                            });
+                        });
                     }
                 } else if(this.status == 404){
                     content.innerHTML = "<p>Halaman tidak dapat ditemukan!</p>";
@@ -64,7 +70,6 @@ document.addEventListener("DOMContentLoaded", function(){
                     content.innerHTML = "<p>Ups.. Halaman tidak dapat diakses.</p>";
                 }
             }
-            console.log(page);
         };
 
         xhttp.open("GET",`/pages/${page}.html`, true);
