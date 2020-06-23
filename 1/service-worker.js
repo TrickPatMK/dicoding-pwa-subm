@@ -24,7 +24,8 @@ let urlsToCache = [
     "/images/close.png",
     "/images/add.png",
     "/images/icon.png",
-    "images/icon192.png"
+    "/images/icon192.png",
+    "/images/icon180-fill.png"
 ];
 
 self.addEventListener("install", event => {

@@ -3,9 +3,9 @@
    "short_name": "Alta",
    "description": "Aplikasi untuk mendekatkan para pecinta alam dengan lingkungannya",
    "start_url": "/index.html",
-   "theme_color": "#388E3C",
    "display": "standalone",
    "background_color": "#81C784",
+   "theme_color": "#388E3C",
    "orientation": "portrait",
    "icons": [
       {
