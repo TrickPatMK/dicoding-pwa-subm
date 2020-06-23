@@ -1,4 +1,4 @@
-const CACHE_NAME = "alta v1.3";
+const CACHE_NAME = "alta v1.4";
 let urlsToCache = [
     "/",
     "/nav.html",
@@ -24,7 +24,6 @@ let urlsToCache = [
     "/images/close.png",
     "/images/add.png",
     "/images/icon.png",
-    "/images/icon192.png",
     "/images/icon180-fill.png"
 ];
 
