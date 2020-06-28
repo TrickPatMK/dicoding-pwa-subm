@@ -7,6 +7,7 @@ let urlsToCache = [
     "/css/materialize.min.css",
     "/js/materialize.min.js",
     "/js/script.js",
+    "/js/regist-service-worker.js",
     "/pages/community.html",
     "/pages/fauna.html",
     "/pages/flora.html",
