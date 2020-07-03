@@ -19,6 +19,8 @@ function registerServiceWorker(){
 // Config Navigasi
 document.addEventListener("DOMContentLoaded", function(){
 
+   matchInfo();
+
    // activate sidebar nav
    const elems = document.querySelector(".sidenav");
    M.Sidenav.init(elems);
@@ -26,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
    // Load page content
    let page = window.location.hash.substr(1);
-   if(page == "") page == "home";
+   if(page == "") page = "home";
    loadPage(page);
 
    function loadNav(){
@@ -35,7 +37,7 @@ document.addEventListener("DOMContentLoaded", function(){
          if(this.state == 4){
             if(this.status != 200) return;
 
-            // Muat daftar tautan menu
+             // Muat daftar tautan menu
             document.querySelectorAll(".topnav, .sidenav").forEach(elm => {
                elm.innerHTML = xhttp.responseText;
             });
@@ -55,7 +57,7 @@ document.addEventListener("DOMContentLoaded", function(){
          }
       };
 
-      xhttp.open("GET", "/page/nav.html", true);
+      xhttp.open("GET", "/pages/nav.html", true);
       xhttp.send();
    }
 
