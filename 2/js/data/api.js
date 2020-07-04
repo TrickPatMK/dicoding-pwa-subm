@@ -1,4 +1,4 @@
-const base_url = 'https://api.football-data.org/v2/';
+const base_url = 'https://api.football-data.org/v2';
 
 // blok kode dipanggil jika fetch berhasil
 function status(response){
@@ -20,20 +20,31 @@ function error(err){
 }
 
 
-function matchInfo(){
+function competitionInfo(){
    const options = {
-      mode: 'no-cors',
       headers: {
          'X-Auth-Token': 'a4f16bcf809a415b9399a45eda437443'
       }
-   }
+   };
 
-   fetch(`${base_url}2001/standings`, options)
+   fetch(`${base_url}/competitions/2000`, options)
    .then(status)
    .then(parseJson)
-   .then(datas => {
-      datas.standings.forEach(data => {
-         console.log(data);
-      });
+   .then(data => {
+      const printData = `
+      <div class="card">
+         <div class="card-image waves-effect waves-block waves-light">
+           <img class="activator" src="${data.currentSeason.winner.crestUrl}">
+         </div>
+         <div class="card-content">
+           <span class="card-title activator grey-text text-darken-4">${data.name}<i class="material-icons right">more_vert</i></span>
+           <p><a href="#competition-detail">Match Statistic</a></p>
+         </div>
+         <div class="card-reveal">
+           <span class="card-title grey-text text-darken-4">${data.name}<i class="material-icons right">close</i></span>
+           <p>winner is ${data.currentSeason.winner.name}</p>
+         </div>
+      </div>`;
+      document.getElementById("match").innerHTML = printData;
    });
 }

@@ -19,10 +19,8 @@ function registerServiceWorker(){
 // Config Navigasi
 document.addEventListener("DOMContentLoaded", function(){
 
-   matchInfo();
-
    // activate sidebar nav
-   const elems = document.querySelector(".sidenav");
+   const elems = document.querySelectorAll(".sidenav");
    M.Sidenav.init(elems);
    loadNav();
 
@@ -34,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function(){
    function loadNav(){
       const xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function(){
-         if(this.state == 4){
+         if(this.readyState == 4){
             if(this.status != 200) return;
 
              // Muat daftar tautan menu
@@ -57,7 +55,7 @@ document.addEventListener("DOMContentLoaded", function(){
          }
       };
 
-      xhttp.open("GET", "/pages/nav.html", true);
+      xhttp.open("GET", "pages/nav.html", true);
       xhttp.send();
    }
 
@@ -68,6 +66,9 @@ document.addEventListener("DOMContentLoaded", function(){
             let content = document.querySelector("#body-content");
             if(this.status == 200){
                content.innerHTML = xhttp.responseText;
+               if(page === 'home') {
+                  competitionInfo();
+               }
             } else if(this.status == 404){
                content.innerHTML = `<h3>Halaman Tidak dapat ditemukan!</h3>`;
             } else {
@@ -78,5 +79,6 @@ document.addEventListener("DOMContentLoaded", function(){
 
       xhttp.open("GET", `/pages/${page}.html`, true);
       xhttp.send();
+      console.log(page);
    }
 });
