@@ -59,6 +59,7 @@ document.addEventListener("DOMContentLoaded", function(){
       xhttp.send();
    }
 
+
    function loadPage(page){
       const xhttp = new XMLHttpRequest();
       xhttp.onreadystatechange = function(){
@@ -67,7 +68,9 @@ document.addEventListener("DOMContentLoaded", function(){
             if(this.status == 200){
                content.innerHTML = xhttp.responseText;
                if(page === 'home') {
-                  competitionInfo();
+                  matchInfo();
+               } else if(page === 'standings'){
+                  standingList();
                }
             } else if(this.status == 404){
                content.innerHTML = `<h3>Halaman Tidak dapat ditemukan!</h3>`;
