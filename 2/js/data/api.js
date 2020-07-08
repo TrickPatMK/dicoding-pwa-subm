@@ -36,7 +36,7 @@ function matchInfo(){
       datas.matches.forEach(data => {
          printData += `
          <div class="col s12 m6 l6">
-            <a href="pages/match.html">
+            <a href="./pages/match.html?id=${data.id}">
                <div class="card">
                   <div class="card-content white-text">
                      <div class="card-panel teal">          
@@ -56,6 +56,108 @@ function matchInfo(){
          </div>`;
          document.getElementById("match").innerHTML = printData;
       });
+   });
+}
+
+
+function matchDetail(){
+   return new Promise(function(resolve, reject){
+      const urlParam = new URLSearchParams(window.location.search);
+      const idParam = urlParam.get("id");
+
+      const options = {
+         headers: {
+            'X-Auth-Token': 'a4f16bcf809a415b9399a45eda437443'
+         }
+      };
+   // masukinn data satu2 
+   // simplyfied the id capture
+      fetch(`${base_url}/matches/${idParam}`, options)
+      .then(status)
+      .then(parseJson)
+      .then(data => {
+         let printData = `
+         <div class="container">
+            <div class="card"></div>
+         </div`;
+
+         // mengirimkan informasi id dari tiap team untuk memperoleh data tiap team dari api.
+         matchHomeTeamDetail.homeId = data.match.homeTeam.id;
+         matchAwayTeamDetail.awayId = data.match.awayTeam.id;
+
+         console.log(matchHomeTeamDetail.homeId);
+         console.log(matchAwayTeamDetail.awayId);
+
+         document.getElementById("body-content").innerHTML = printData;
+         resolve(data);
+      });
+   });
+}
+
+function matchHomeTeamDetail(homeId){
+   homeId = this.homeId;
+   return new Promise(function(resolve, reject){
+      const options = {
+         headers: {
+            'X-Auth-Token': 'a4f16bcf809a415b9399a45eda437443'
+         }
+      };
+      fetch(`${base_url}/teams/${this.homeId}`, options)
+      .then(status)
+      .then(parseJson)
+      .then(data => {
+         
+         let printData = `
+         <div class="container">
+            <table>
+               <thead>
+                  <tr>
+                     <th>Name</th>
+                     <th>Item Name</th>
+                     <th>Item Price</th>
+                  </tr>
+               </thead>
+               <tbody>
+                  <tr>
+                     <td>Alvin</td>
+                     <td>Eclair</td>
+                     <td>$0.87</td>
+                  </tr>
+                  <tr>
+                     <td>Alan</td>
+                     <td>Jellybean</td>
+                     <td>$3.76</td>
+                  </tr>
+                  <tr>
+                     <td>Jonathan</td>
+                     <td>Lollipop</td>
+                     <td>$7.00</td>
+                  </tr>
+               </tbody>
+            </table>
+         </div>`;
+
+         // menampilkan data di html
+         document.getElementById("homeTeam").innerHTML = printData;
+         resolve(data);
+      });
+   });
+}
+
+function matchAwayTeamDetail(awayId){
+   const options = {
+      headers: {
+         'X-Auth-Token': 'a4f16bcf809a415b9399a45eda437443'
+      }
+   };
+   fetch(`${base_url}/teams/${awayId}`, options)
+   .then(status)
+   .then(parseJson)
+   .then(data => {
+      
+
+      document.getElementById("awayTeam").innerHTML = printTemplate;
+      resolve(data);
    });
 }
 
