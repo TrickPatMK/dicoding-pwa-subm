@@ -1,5 +1,6 @@
 const base_url = 'https://api.football-data.org/v2';
 
+
 // blok kode dipanggil jika fetch berhasil
 function status(response){
    if(response.status !== 200){
@@ -64,7 +65,6 @@ function matchDetail(){
    return new Promise(function(resolve, reject){
       const urlParam = new URLSearchParams(window.location.search);
       const idParam = urlParam.get("id");
-
       const options = {
          headers: {
             'X-Auth-Token': 'a4f16bcf809a415b9399a45eda437443'
@@ -82,65 +82,63 @@ function matchDetail(){
          </div`;
 
          // mengirimkan informasi id dari tiap team untuk memperoleh data tiap team dari api.
-         matchHomeTeamDetail.homeId = data.match.homeTeam.id;
-         matchAwayTeamDetail.awayId = data.match.awayTeam.id;
+         matchHomeTeamDetail(data.match.homeTeam.id);
+         matchAwayTeamDetail(data.match.awayTeam.id);
 
-         console.log(matchHomeTeamDetail.homeId);
-         console.log(matchAwayTeamDetail.awayId);
-
-         document.getElementById("body-content").innerHTML = printData;
+         document.getElementById("match").innerHTML = printData;
          resolve(data);
       });
    });
 }
 
-function matchHomeTeamDetail(homeId){
-   homeId = this.homeId;
-   return new Promise(function(resolve, reject){
-      const options = {
-         headers: {
-            'X-Auth-Token': 'a4f16bcf809a415b9399a45eda437443'
-         }
-      };
-      fetch(`${base_url}/teams/${this.homeId}`, options)
-      .then(status)
-      .then(parseJson)
-      .then(data => {
-         
-         let printData = `
-         <div class="container">
-            <table>
-               <thead>
-                  <tr>
-                     <th>Name</th>
-                     <th>Item Name</th>
-                     <th>Item Price</th>
-                  </tr>
-               </thead>
-               <tbody>
-                  <tr>
-                     <td>Alvin</td>
-                     <td>Eclair</td>
-                     <td>$0.87</td>
-                  </tr>
-                  <tr>
-                     <td>Alan</td>
-                     <td>Jellybean</td>
-                     <td>$3.76</td>
-                  </tr>
-                  <tr>
-                     <td>Jonathan</td>
-                     <td>Lollipop</td>
-                     <td>$7.00</td>
-                  </tr>
-               </tbody>
-            </table>
-         </div>`;
 
-         // menampilkan data di html
-         document.getElementById("homeTeam").innerHTML = printData;
-         resolve(data);
+function matchHomeTeamDetail(homeId){
+   const options = {
+      headers: {
+         'X-Auth-Token': 'a4f16bcf809a415b9399a45eda437443'
+      }
+   };
+   fetch(`${base_url}/teams/${homeId}`, options)
+   .then(status)
+   .then(parseJson)
+   .then(data => {
+      let printPlayerList = '';
+      data.squad.forEach(player => {
+         if(player.role == "PLAYER"){
+            printPlayerList += `
+               <tr>
+                  <td>${player.id}</td>
+                  <td>${player.name}</td>
+                  <td>${player.position}</td>
+               </tr>
+            `;
+         }
       });
+      let urlGambar = data.crestUrl;
+      if(data.crestUrl == null){
+         urlGambar = "";
+      } else {
+         urlGambar.replace(/^http:\/\//i, 'https://');
+      }
+      let printData = `
+      <div class="container">
+         <h3 class="center-align">${data.name}</h3>
+         <img class="responsive-img" src="${urlGambar}" />
+         <table class="striped">
+            <caption>Player</caption>
+            <thead>
+               <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Position</th>
+               </tr>
+            </thead>
+            <tbody>${printPlayerList}</tbody>
+         </table>
+      </div>`;
+
+      // menampilkan data di html
+      document.getElementById("homeTeam").innerHTML = printData;
    });
 }
 
@@ -154,10 +152,43 @@ function matchAwayTeamDetail(awayId){
    .then(status)
    .then(parseJson)
    .then(data => {
-      
+      let printPlayerList = '';
+      data.squad.forEach(player => {
+         if(player.role == "PLAYER"){
+            printPlayerList += `
+               <tr>
+                  <td>${player.id}</td>
+                  <td>${player.name}</td>
+                  <td>${player.position}</td>
+               </tr>
+            `;
+         }
+      });
+      let urlGambar = data.crestUrl;
+      if(data.crestUrl == null){
+         urlGambar = "";
+      } else {
+         urlGambar.replace(/^http:\/\//i, 'https://');
+      }
+      let printData = `
+      <div class="container">
+         <h3 class="center-align">${data.name}</h3>
+         <img class="responsive-img" src="${urlGambar}" />
+         <table class="striped">
+            <caption>Player</caption>
+            <thead>
+               <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Position</th>
+               </tr>
+            </thead>
+            <tbody>${printPlayerList}</tbody>
+         </table>
+      </div>`;
 
-      document.getElementById("awayTeam").innerHTML = printTemplate;
-      resolve(data);
+      // menampilkan data di html
+      document.getElementById("awayTeam").innerHTML = printData;
    });
 }
 
