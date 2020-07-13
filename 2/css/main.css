@@ -1,3 +1,5 @@
+/* index file */
+
 .score{
    padding: 10px;
    font-size: 1.5em;
@@ -24,4 +26,37 @@
    position: absolute;
    font-size: 2em;
    font-weight: bolder;
+}
+
+/* match file */
+
+nav.nav-center ul{
+   text-align: center;
+}
+
+nav.nav-center ul li{
+   display: inline;
+   float: none;
+}
+
+nav.nav-center ul li a{
+   display: inline-block;
+}
+
+.tabs .tab a{
+   color: #43a047;
+}
+
+.tabs .tab a:hover{
+   background-color: #c8e6c9;
+   color: #43a047;
+}
+
+.tabs .tab a.active{
+   background-color: #c8e6c9;
+   color: #43a047;
+}
+
+.tabs .indicator{
+   background-color: #43a047;
 }
