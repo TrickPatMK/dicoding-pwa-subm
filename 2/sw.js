@@ -15,7 +15,8 @@ let urlsToCache = [
    "/pages/home.html",
    "/pages/match.html",
    "/pages/nav.html",
-   "/pages/standings.html"
+   "/pages/standings.html",
+   "https://fonts.googleapis.com/icon?family=Material+Icons"
 ];
 
 self.addEventListener("install", function(event) {

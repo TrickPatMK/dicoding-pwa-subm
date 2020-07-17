@@ -22,6 +22,7 @@ document.addEventListener("DOMContentLoaded", function(){
       console.log(`Menyimpan pertandingan...`);
       matchPage.then(match => {
          saveForLater(match);
+         console.log(match);
       })
    }
 })

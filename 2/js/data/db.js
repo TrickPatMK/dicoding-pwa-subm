@@ -8,6 +8,7 @@ function saveForLater(match){
    .then(db => {
       let tx = db.transaction("match", "readwrite");
       let store = tx.objectStore("match");
+      console.log(db);
       console.log(match);
       store.add(match.match);
       return tx.complete;

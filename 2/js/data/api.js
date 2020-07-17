@@ -91,8 +91,7 @@ function matchInfo(){
       });
    });
 }
-let setHomeId = '';
-let setAwayId = '';
+
 // Match Page
 function matchDetail(){
    return new Promise(function(resolve, reject){
@@ -200,8 +199,8 @@ function matchDetail(){
          </div`;
 
          // mengirimkan informasi id dari tiap team untuk memperoleh data tiap team dari api.
-         setHomeId = data.match.homeTeam.id;
-         setAwayId = data.match.awayTeam.id;
+         matchHomeTeamDetail(data.match.homeTeam.id);
+         matchAwayTeamDetail(data.match.awayTeam.id);
 
          document.getElementById("match").innerHTML = printData;
          resolve(data);
@@ -210,7 +209,6 @@ function matchDetail(){
 }
 
 function matchHomeTeamDetail(homeId){
-   homeId = setHomeId;
    console.log(`Home Team ID: ${homeId}`);
    return new Promise(function(resolve, reject){
       if('caches' in window){
@@ -366,7 +364,6 @@ function matchHomeTeamDetail(homeId){
 }
 
 function matchAwayTeamDetail(awayId){
-   awayId = setAwayId;
    console.log(`Away Team ID: ${awayId}`);
    if('caches' in window){
       caches.match(`${base_url}/teams/${awayId}`)
@@ -520,6 +517,7 @@ function matchAwayTeamDetail(awayId){
 function getSavedMatchInfo(){
    getAll()
    .then(datas => {
+      console.log(datas);
       let printData = '';
       datas.forEach(data => {
          printData += `
@@ -549,7 +547,10 @@ function getSavedMatchInfo(){
 
 function getSavedMatchDetail(){
    const urlParam = new URLSearchParams(window.location.search);
-   const idParam = urlParam.get("id");
+   const idParam = parseInt(urlParam.get("id"));
+
+   let get = getById(idParam);
+   console.log(get);
 
    getById(idParam)
    .then(data => {
@@ -602,7 +603,7 @@ function getSavedMatchDetail(){
                </thead>
                <tbody>
                   <tr>
-                     <td>${data.match.venue}</td>
+                     <td>${data.venue}</td>
                   </tr>
                </tbody>
             </table>
@@ -650,8 +651,6 @@ function getSavedMatchDetail(){
          </div`;
 
          // mengirimkan informasi id dari tiap team untuk memperoleh data tiap team dari api.
-         setHomeId = data.homeTeam.id;
-         setAwayId = data.awayTeam.id;
 
          document.getElementById("match").innerHTML = printData;
    })
