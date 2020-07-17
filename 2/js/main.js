@@ -1,22 +1,3 @@
-// REGISTER SERVICE WORKER
-// i just think this need to separated since main not connected to match page
-if(!("serviceWorker" in navigator)){
-   console.log('Service Worker tidak didukung browser ini.');
-} else {
-   registerServiceWorker();
-}
-
-function registerServiceWorker(){
-   return navigator.serviceWorker.register("/sw.js")
-   .then(registration => {
-      console.log('Registrasi Service Worker berhasil!');
-      return registration;
-   })
-   .catch(err => {
-      console.error('Registrasi Service Worker gagal', err);
-   });
-}
-
 // Config Navigasi
 document.addEventListener("DOMContentLoaded", function(){
 
@@ -72,7 +53,9 @@ document.addEventListener("DOMContentLoaded", function(){
                   matchInfo();
                } else if(page === 'standings'){
                   standingList();
-               } 
+               } else if(page === 'favorites'){
+                  getSavedMatchInfo();
+               }
             } else if(this.status == 404){
                content.innerHTML = `<h3>Halaman Tidak dapat ditemukan!</h3>`;
             } else {
