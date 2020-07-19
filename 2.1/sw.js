@@ -5,12 +5,10 @@ let urlsToCache = [
    "/manifest.json",
    "/css/main.css",
    "/css/materialize.min.css",
-   "/img/logo192.png",
-   "/img/logo512.png",
    "/js/main.js",
    "/js/match.js",
    "/js/materialize.min.js",
-   "/js/registration.js",
+   "/js/register-sw.js",
    "/js/data/api.js",
    "/js/data/idb.js",
    "/js/data/db.js",
@@ -101,6 +99,7 @@ self.addEventListener('push', event => {
 
    const options = {
       body: body,
+      icon: '',
       vibrate: [100, 50, 100],
       data: {
          dataOfArival: Date.now(),
