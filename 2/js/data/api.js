@@ -30,7 +30,7 @@ function matchInfo(){
       caches.match(`${base_url}/competitions/2000/matches?group=Group A`)
       .then(response => {
          if(response){
-            response.parseJson()
+            parseJson(response)
             .then(datas => {
                let printData = '';
                datas.matches.forEach(data => {
@@ -212,7 +212,7 @@ function matchHomeTeamDetail(){
          caches.match(`${base_url}/teams/${homeParam}`)
          .then(response => {
             if(response){
-               response.parseJson()
+               parseJson(response)
                .then(homeData => {
                   let playerList = '';
                   let printPlayerList = '';
@@ -368,7 +368,7 @@ function matchAwayTeamDetail(){
          caches.match(`${base_url}/teams/${awayParam}`)
          .then(response => {
             if(response){
-               response.parseJson()
+               parseJson(response)
                .then(awayData => {
                   let playerList = '';
                   let printPlayerList = '';
@@ -552,6 +552,7 @@ function getSavedMatchInfo(){
 function deleteMatch(match){
    deleteFromDb(match);
    getSavedMatchInfo();
+   M.toast({html: 'Match telah dihapus!', displayLength: 2000});
 }
 
 function getSavedMatchDetail(){
@@ -569,7 +570,7 @@ function getSavedMatchDetail(){
                <td>${person.name}</td>
             </tr>`;
          });
-      let score = {
+         let score = {
             home:{
                _fulltime: data.score.fullTime.homeTeam,
                _halftime: data.score.halfTime.homeTeam,
@@ -582,7 +583,7 @@ function getSavedMatchDetail(){
                _extratime: data.score.extraTime.awayTeam,
                penalties: data.score.penalties.awayTeam
             }
-      }
+         }
         
       // [0]home.full || [1]home.half || [2]home.extra || [3]home.penal || [4]away.full || [5]away.half || [6]away.extra || [7]away.penal
       const scoreType = new Array(score.home._fulltime, score.home._halftime, score.home._extratime, score.home.penalties, score.away._fulltime, score.away._halftime, score.away._extratime, score.away.penalties);
@@ -811,6 +812,53 @@ function getSavedAwayTeamDetail(){
 
 // Standings Page
 function standingList(){
+   if('caches' in window){
+      caches.match(`${base_url}/competitions/2000/matches?group=Group A`)
+      .then(response => {
+         if(response){
+            parseJson(response)
+            .then(datas => {
+               let printData = '';
+               datas.standings.forEach(data => {
+                  let standingGroup = data.group;
+                  if(standingGroup == 'GROUP_A'){
+                     let printTeams = "";
+                     data.table.forEach(team => {
+                        printTeams +=`
+                        <tr>
+                           <td>${team.position}</td>
+                           <td>${team.team.name}</td>
+                           <td>${team.playedGames}</td>
+                           <td>${team.won}</td>
+                           <td>${team.goalsFor}</td>
+                           <td>${team.points}</td>
+                        </tr>`;
+                     });
+                     printData += `
+                     <h3>Standings</h3>
+                     <table class="centered">
+                        <thead>
+                           <tr>
+                              <th>Position</th>
+                              <th>Team</th>
+                              <th>Matches</th>
+                              <th>Win</th>
+                              <th>Goals</th>
+                              <th>Point</th>
+                           </tr>
+                        </thead>
+                        <tbody>
+                           ${printTeams}
+                        </tbody>
+                     </table>`;
+                  } 
+               });
+               document.getElementById("standings").innerHTML = printData;
+            });
+         }
+      });
+   }
+   
    fetch(`${base_url}/competitions/2000/standings?standingType=TOTAL`, options)
    .then(status)
    .then(parseJson)

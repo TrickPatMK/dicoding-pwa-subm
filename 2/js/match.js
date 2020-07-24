@@ -29,9 +29,10 @@ document.addEventListener("DOMContentLoaded", function(){
       });
       homeTeam.then(home => {
          saveTeam(home);
-      })
+      });
       awayTeam.then(away => {
          saveTeam(away);
-      })
+      });
+      M.toast({html: 'Menambahkan ke favorite!', displayLength: 2000});
    }
 })

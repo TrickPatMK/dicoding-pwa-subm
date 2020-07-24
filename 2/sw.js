@@ -34,23 +34,6 @@ self.addEventListener("install", function(event) {
 });
 
 self.addEventListener("fetch", event => {
-   console.log(`Memproses request...`);
-   event.respondWith(
-      caches
-      .match(event.request, {cacheName: CACHE_NAME})
-      .then(response => {
-         if(response){
-            console.log(`ServiceWorker: Gunakan dari cache: ${response.url}`);
-            return response;
-         }
-
-         console.log(`ServiceWorker: Memuat aset dari server: ${event.request.url}`);
-         return fetch(event.request);
-      })
-   );
-});
-
-self.addEventListener("fetch", event => {
    const base_url = 'https://api.football-data.org/v2';
 
    if(event.request.url.indexOf(base_url) > -1){
@@ -74,6 +57,24 @@ self.addEventListener("fetch", event => {
       );
    }
 });
+
+self.addEventListener("fetch", event => {
+   console.log(`Memproses request...`);
+   event.respondWith(
+      caches
+      .match(event.request, {cacheName: CACHE_NAME})
+      .then(response => {
+         if(response){
+            console.log(`ServiceWorker: Gunakan dari cache: ${response.url}`);
+            return response;
+         }
+
+         console.log(`ServiceWorker: Memuat aset dari server: ${event.request.url}`);
+         return fetch(event.request);
+      })
+   );
+});
+
 
 self.addEventListener("activate", event => {
    event.waitUntil(
