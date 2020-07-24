@@ -15,7 +15,7 @@ function saveForLater(match){
       let store = tx.objectStore("match");
       console.log(db);
       console.log(match);
-      store.add(match.match);
+      store.put(match.match);
       return tx.complete;
    })
    .then(() => {
@@ -29,7 +29,7 @@ function saveTeam(team){
       let tx = db.transaction("team", "readwrite");
       let store = tx.objectStore("team");
       console.log(team)
-      store.add(team);
+      store.put(team);
       return tx.complete;
    })
    .then(() => {

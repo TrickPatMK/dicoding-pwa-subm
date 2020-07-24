@@ -26,45 +26,7 @@ function error(err){
 
 // Index Page
 function matchInfo(){
-   if('caches' in window){
-      caches.match(`${base_url}/competitions/2000/matches?group=Group A`)
-      .then(response => {
-         if(response){
-            parseJson(response)
-            .then(datas => {
-               let printData = '';
-               datas.matches.forEach(data => {
-                  printData += `
-                  <div class="col s12 m6 l6">
-                     <a href="./pages/match.html?id=${data.id}&home=${data.homeTeam.id}&away=${data.awayTeam.id}">
-                        <div class="card">
-                           <div class="card-content white-text">
-                              <div class="card-panel teal">          
-                                 <span class="white-text left">${data.homeTeam.name}</span>
-                                 <span class="white-text right">${data.awayTeam.name}</span>
-                              </div>
-                              <div class="center-align black-text abs col s10 m10 l10">VS</div>
-                              <span class="black-text left teal score home">${data.score.fullTime.homeTeam}</span>
-                              <span class="black-text right teal score away">${data.score.fullTime.awayTeam}</span>
-                           </div>
-                           <div class="card-content">
-                              <span class="black-text left homehead">Home</span>
-                              <span class="black-text right awayhead">Away</span>
-                           </div>
-                        </div>
-                     </a>
-                  </div>`;
-                  document.getElementById("match").innerHTML = printData;
-               });
-            });
-         }
-      });
-   }
-   
-   fetch(`${base_url}/competitions/2000/matches?group=Group A`, options)
-   .then(status)
-   .then(parseJson)
-   .then(datas => {
+   function htmlData(datas){
       let printData = '';
       datas.matches.forEach(data => {
          printData += `
@@ -72,13 +34,13 @@ function matchInfo(){
             <a href="./pages/match.html?id=${data.id}&home=${data.homeTeam.id}&away=${data.awayTeam.id}">
                <div class="card">
                   <div class="card-content white-text">
-                     <div class="card-panel teal">          
+                     <div class="card-panel green darken-1">          
                         <span class="white-text left">${data.homeTeam.name}</span>
                         <span class="white-text right">${data.awayTeam.name}</span>
                      </div>
                      <div class="center-align black-text abs col s10 m10 l10">VS</div>
-                     <span class="black-text left teal score home">${data.score.fullTime.homeTeam}</span>
-                     <span class="black-text right teal score away">${data.score.fullTime.awayTeam}</span>
+                     <span class="white-text left green darken-1 score home">${data.score.fullTime.homeTeam}</span>
+                     <span class="white-text right green darken-1 score away">${data.score.fullTime.awayTeam}</span>
                   </div>
                   <div class="card-content">
                      <span class="black-text left homehead">Home</span>
@@ -89,6 +51,25 @@ function matchInfo(){
          </div>`;
          document.getElementById("match").innerHTML = printData;
       });
+   }
+
+   if('caches' in window){
+      caches.match(`${base_url}/competitions/2000/matches?group=Group A`)
+      .then(response => {
+         if(response){
+            parseJson(response)
+            .then(datas => {
+               htmlData(datas);
+            });
+         }
+      });
+   }
+   
+   fetch(`${base_url}/competitions/2000/matches?group=Group A`, options)
+   .then(status)
+   .then(parseJson)
+   .then(datas => {
+      htmlData(datas);
    });
 }
 
@@ -208,87 +189,8 @@ function matchHomeTeamDetail(){
    return new Promise((resolve, reject) => {
       const urlParam = new URLSearchParams(window.location.search);
       const homeParam = urlParam.get("home");
-      if('caches' in window){
-         caches.match(`${base_url}/teams/${homeParam}`)
-         .then(response => {
-            if(response){
-               parseJson(response)
-               .then(homeData => {
-                  let playerList = '';
-                  let printPlayerList = '';
-                  let coachName = '-';
-                  homeData.squad.forEach(player => {
-                     if(player.role == "PLAYER"){
-                        playerList += `
-                           <tr>
-                              <td>${player.id}</td>
-                              <td>${player.name}</td>
-                              <td>${player.position}</td>
-                           </tr>
-                        `;
-                     } else if(player.role == "COACH"){
-                        if(player.name != '') coachName = player.name;
-                     }
-                  });
-                  if(playerList == ''){
-                     printPlayerList = `<p>Sorry, player data isn't available.</p>`;
-                  } else {
-                     printPlayerList = `
-                     <h4 class="center-align">Player</h4>
-                     <table class="striped">
-                        <thead>
-                           <tr>
-                              <th>ID</th>
-                              <th>Name</th>
-                              <th>Position</th>
-                           </tr>
-                        </thead>
-                        <tbody>${playerList}</tbody>
-                     </table>`;
-                  }
-                  let urlGambar = homeData.crestUrl;
-                  let printImage = '';
-                  if(homeData.crestUrl == null || homeData.crestUrl == ''){
-                     urlGambar = "";
-                  } else {
-                     urlGambar.replace(/^http:\/\//i, 'https://');
-                     printImage = `
-                     <figure class="z-depth-3">
-                        <img class="responsive-img center-align" src="${urlGambar}" />
-                     </figure>`;
-                  }
-                  let printData = `
-                  <div class="container">
-                     <h3 class="center-align">${homeData.tla} - ${homeData.name}</h3>
-                     ${printImage}
-                     <table>
-                        <tr>
-                           <th>Club Colors</th>
-                           <td>: ${homeData.clubColors}</td>
-                        </tr>
-                        <tr>
-                           <th>Coach</th>
-                           <td>: ${coachName}</td>
-                        </tr>
-                     </table>
-            
-                     <br/>
-            
-                     ${printPlayerList}
-                  </div>`;
-            
-                  // menampilkan data di html
-                  document.getElementById("homeTeam").innerHTML = printData;
-                  resolve(homeData);
-               });
-            }
-         })
-      }
-      
-      fetch(`${base_url}/teams/${homeParam}`, options)
-      .then(status)
-      .then(parseJson)
-      .then(homeData => {
+
+      function htmlData(homeData){
          let playerList = '';
          let printPlayerList = '';
          let coachName = '-';
@@ -309,17 +211,18 @@ function matchHomeTeamDetail(){
             printPlayerList = `<p>Sorry, player data isn't available.</p>`;
          } else {
             printPlayerList = `
-            <h4 class="center-align">Player</h4>
-            <table class="striped">
-               <thead>
-                  <tr>
-                     <th>ID</th>
-                     <th>Name</th>
-                     <th>Position</th>
-                  </tr>
-               </thead>
-               <tbody>${playerList}</tbody>
-            </table>`;
+               <h4 class="center-align">Player</h4>
+               <table class="striped">
+                  <thead>
+                     <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Position</th>
+                     </tr>
+                  </thead>
+                  <tbody>${playerList}</tbody>
+               </table>
+            `;
          }
          let urlGambar = homeData.crestUrl;
          let printImage = '';
@@ -328,123 +231,61 @@ function matchHomeTeamDetail(){
          } else {
             urlGambar.replace(/^http:\/\//i, 'https://');
             printImage = `
-            <figure class="z-depth-3">
-               <img class="responsive-img center-align" src="${urlGambar}" />
-            </figure>`;
+               <figure class="z-depth-3">
+                  <img class="responsive-img center-align" src="${urlGambar}" />
+               </figure>
+            `;
          }
          let printData = `
-         <div class="container">
-            <h3 class="center-align">${homeData.tla} - ${homeData.name}</h3>
-            ${printImage}
-            <table>
-               <tr>
-                  <th>Club Colors</th>
-                  <td>: ${homeData.clubColors}</td>
-               </tr>
-               <tr>
-                  <th>Coach</th>
-                  <td>: ${coachName}</td>
-               </tr>
-            </table>
-   
-            <br/>
-   
-            ${printPlayerList}
-         </div>`;
-   
+            <div class="container">
+               <h3 class="center-align">${homeData.tla} - ${homeData.name}</h3>
+               ${printImage}
+               <table>
+                  <tr>
+                     <th>Club Colors</th>
+                     <td>: ${homeData.clubColors}</td>
+                  </tr>
+                  <tr>
+                     <th>Coach</th>
+                     <td>: ${coachName}</td>
+                  </tr>
+               </table>
+            
+               <br/>
+            
+               ${printPlayerList}
+            </div>`;
+            
          // menampilkan data di html
          document.getElementById("homeTeam").innerHTML = printData;
          resolve(homeData);
+      }
+      if('caches' in window){
+         caches.match(`${base_url}/teams/${homeParam}`)
+         .then(response => {
+            if(response){
+               parseJson(response)
+               .then(homeData => {
+                  htmlData(homeData);
+               });
+            }
+         })
+      }
+      
+      fetch(`${base_url}/teams/${homeParam}`, options)
+      .then(status)
+      .then(parseJson)
+      .then(homeData => {
+         htmlData(homeData);
       });
-   })
-   
+   });
 }
 
 function matchAwayTeamDetail(){
    return new Promise((resolve, reject) => {
       const urlParam = new URLSearchParams(window.location.search);
       const awayParam = urlParam.get("away");
-      if('caches' in window){
-         caches.match(`${base_url}/teams/${awayParam}`)
-         .then(response => {
-            if(response){
-               parseJson(response)
-               .then(awayData => {
-                  let playerList = '';
-                  let printPlayerList = '';
-                  let coachName = '-';
-                  awayData.squad.forEach(player => {
-                     if(player.role == "PLAYER"){
-                        playerList += `
-                           <tr>
-                              <td>${player.id}</td>
-                              <td>${player.name}</td>
-                              <td>${player.position}</td>
-                           </tr>
-                        `;
-                     } else if(player.role == "COACH"){
-                        if(player.name != '') coachName = player.name;
-                     }
-                  });
-                  if(playerList == ''){
-                     printPlayerList = `<p>Sorry, player data isn't available.</p>`;
-                  } else {
-                     printPlayerList = `
-                     <h4 class="center-align">Player</h4>
-                     <table class="striped">
-                        <thead>
-                           <tr>
-                              <th>ID</th>
-                              <th>Name</th>
-                              <th>Position</th>
-                           </tr>
-                        </thead>
-                        <tbody>${playerList}</tbody>
-                     </table>`;
-                  }
-                  let urlGambar = awayData.crestUrl;
-                  let printImage = '';
-                  if(awayData.crestUrl == null || awayData.crestUrl == ''){
-                     urlGambar = "";
-                  } else {
-                     urlGambar.replace(/^http:\/\//i, 'https://');
-                     printImage = `
-                     <figure class="z-depth-3">
-                        <img class="responsive-img center-align" src="${urlGambar}" />
-                     </figure>`;
-                  }
-                  let printData = `
-                  <div class="container">
-                     <h3 class="center-align">${awayData.tla} - ${awayData.name}</h3>
-                     ${printImage}
-                     <table>
-                        <tr>
-                           <th>Club Colors</th>
-                           <td>: ${awayData.clubColors}</td>
-                        </tr>
-                        <tr>
-                           <th>Coach</th>
-                           <td>: ${coachName}</td>
-                        </tr>
-                     </table>
-            
-                     <br/>
-            
-                     ${printPlayerList}
-                  </div>`;
-            
-                  // menampilkan data di html
-                  document.getElementById("awayTeam").innerHTML = printData;
-                  resolve(awayData);
-               });
-            }
-         })
-      }
-      
-      fetch(`${base_url}/teams/${awayParam}`, options)
-      .then(status)
-      .then(parseJson)
-      .then(awayData => {
+      function htmlData(awayData){
          let playerList = '';
          let printPlayerList = '';
          let coachName = '-';
@@ -465,17 +306,18 @@ function matchAwayTeamDetail(){
             printPlayerList = `<p>Sorry, player data isn't available.</p>`;
          } else {
             printPlayerList = `
-            <h4 class="center-align">Player</h4>
-            <table class="striped">
-               <thead>
-                  <tr>
-                     <th>ID</th>
-                     <th>Name</th>
-                     <th>Position</th>
-                  </tr>
-               </thead>
-               <tbody>${playerList}</tbody>
-            </table>`;
+               <h4 class="center-align">Player</h4>
+               <table class="striped">
+                  <thead>
+                     <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Position</th>
+                     </tr>
+                  </thead>
+                  <tbody>${playerList}</tbody>
+               </table>
+            `;
          }
          let urlGambar = awayData.crestUrl;
          let printImage = '';
@@ -484,33 +326,53 @@ function matchAwayTeamDetail(){
          } else {
             urlGambar.replace(/^http:\/\//i, 'https://');
             printImage = `
-            <figure class="z-depth-3">
-               <img class="responsive-img center-align" src="${urlGambar}" />
-            </figure>`;
+               <figure class="z-depth-3">
+                  <img class="responsive-img center-align" src="${urlGambar}" />
+               </figure>
+            `;
          }
          let printData = `
-         <div class="container">
-            <h3 class="center-align">${awayData.tla} - ${awayData.name}</h3>
-            ${printImage}
-            <table>
-               <tr>
-                  <th>Club Colors</th>
-                  <td>: ${awayData.clubColors}</td>
-               </tr>
-               <tr>
-                  <th>Coach</th>
-                  <td>: ${coachName}</td>
-               </tr>
-            </table>
+            <div class="container">
+               <h3 class="center-align">${awayData.tla} - ${awayData.name}</h3>
+               ${printImage}
+               <table>
+                  <tr>
+                     <th>Club Colors</th>
+                     <td>: ${awayData.clubColors}</td>
+                  </tr>
+                  <tr>
+                     <th>Coach</th>
+                     <td>: ${coachName}</td>
+                  </tr>
+               </table>
+         
+               <br/>
+      
+               ${printPlayerList}
+            </div>
+         `;
             
-            <br />
-   
-            ${printPlayerList}
-         </div>`;
-   
          // menampilkan data di html
          document.getElementById("awayTeam").innerHTML = printData;
-         resolve(awayData)
+         resolve(awayData);
+      }
+      if('caches' in window){
+         caches.match(`${base_url}/teams/${awayParam}`)
+         .then(response => {
+            if(response){
+               parseJson(response)
+               .then(awayData => {
+                  htmlData(awayData);
+               });
+            }
+         })
+      }
+      
+      fetch(`${base_url}/teams/${awayParam}`, options)
+      .then(status)
+      .then(parseJson)
+      .then(awayData => {
+         htmlData(awayData);
       });
    });
 }
@@ -526,13 +388,13 @@ function getSavedMatchInfo(){
             <a href="./pages/match.html?id=${data.id}&home=${data.homeTeam.id}&away=${data.awayTeam.id}&saved=true">
                <div class="card">
                   <div class="card-content white-text">
-                     <div class="card-panel teal">          
+                     <div class="card-panel green darken-1">          
                         <span class="white-text left">${data.homeTeam.name}</span>
                         <span class="white-text right">${data.awayTeam.name}</span>
                      </div>
                      <div class="center-align black-text abs col s10 m10 l10">VS</div>
-                     <span class="black-text left teal score home">${data.score.fullTime.homeTeam}</span>
-                     <span class="black-text right teal score away">${data.score.fullTime.awayTeam}</span>
+                     <span class="black-text left green darken-1 score home">${data.score.fullTime.homeTeam}</span>
+                     <span class="black-text right green darken-1 score away">${data.score.fullTime.awayTeam}</span>
                   </div>
                   <div class="card-content">
                      <span class="black-text left homehead">Home</span>

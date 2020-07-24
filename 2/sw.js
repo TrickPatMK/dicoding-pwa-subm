@@ -1,5 +1,5 @@
 const CACHE_NAME = "ligabola v1.2";
-let urlsToCache = [
+const urlsToCache = [
    "/",
    "/index.html",
    "/manifest.json",

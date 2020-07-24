@@ -34,5 +34,6 @@ document.addEventListener("DOMContentLoaded", function(){
          saveTeam(away);
       });
       M.toast({html: 'Menambahkan ke favorite!', displayLength: 2000});
+      saveBtn.classList.add('disabled');
    }
 })
