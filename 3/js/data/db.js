@@ -13,7 +13,6 @@ function saveForLater(match){
    .then(db => {
       let tx = db.transaction("match", "readwrite");
       let store = tx.objectStore("match");
-      console.log(db);
       console.log(match);
       store.put(match.match);
       return tx.complete;

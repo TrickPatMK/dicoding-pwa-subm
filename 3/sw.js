@@ -1,96 +1,83 @@
-const CACHE_NAME = "ligabola v1.2";
-const urlsToCache = [
-   "/",
-   "/index.html",
-   "/manifest.json",
-   "/css/main.css",
-   "/css/materialize.min.css",
-   "/img/logo192.png",
-   "/img/logo512.png",
-   "/js/main.js",
-   "/js/match.js",
-   "/js/materialize.min.js",
-   "/js/registration.js",
-   "/js/data/api.js",
-   "/js/data/idb.js",
-   "/js/data/db.js",
-   "/pages/favorites.html",
-   "/pages/home.html",
-   "/pages/match.html",
-   "/pages/nav.html",
-   "/pages/standings.html",
-   "https://fonts.googleapis.com/icon?family=Material+Icons",
-   "https://fonts.gstatic.com/s/materialicons/v53/flUhRq6tzZclQEJ-Vdg-IuiaDsNcIhQ8tQ.woff2"
-];
+importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js');
 
-self.addEventListener("install", function(event) {
-   event.waitUntil(
-      caches.open(CACHE_NAME)
-      .then(cache => {
-         console.log(`${CACHE_NAME} berhasil terinstal`);
-         return cache.addAll(urlsToCache);
-      })
-   );
+if(workbox) console.log('Workbox berhasil dimuat');
+   else console.log('Workbox gagal dimuat');
+
+workbox.precaching.precacheAndRoute([
+   {url: '/index.html', revision: '1'},
+   {url: '/manifest.json', revision: '1'},
+   {url: '/css/main.css', revision: '1'},
+   {url: '/css/materialize.min.css', revision: '1'},
+   {url: '/img/logo192.png', revision: '1'},
+   {url: '/img/logo512.png', revision: '1'},
+   {url: '/js/main.js', revision: '1'},
+   {url: '/js/match.js', revision: '1'},
+   {url: '/js/materialize.min.js', revision: '1'},
+   {url: '/js/registration.js', revision: '1'},
+   {url: '/js/data/api.js', revision: '1'},
+   {url: '/js/data/idb.js', revision: '1'},
+   {url: '/js/data/db.js', revision: '1'},
+   {url: '/pages/match.html', revision: '1'},
+   {url: '/pages/home.html', revision: '1'},
+   {url: '/pages/favorites.html', revision: '1'},
+   {url: '/pages/nav.html', revision: '1'},
+   {url: '/pages/standings.html', revision: '1'},
+   {url: '/img/logo192.png', revision: '1'},
+   {url: '/img/logo512.png', revision: '1'}
+],
+{
+   ignoreURLParametersMatching: [/.*/]
 });
 
-self.addEventListener("fetch", event => {
-   const base_url = 'https://api.football-data.org/v2';
+const {registerRoute} = workbox.routing;
+const {StaleWhileRevalidate, NetworkFirst} = workbox.strategies;
+const {CacheableResponsePlugin} = workbox.cacheableResponse;
+const {ExpirationPlugin} = workbox.expiration;
 
-   if(event.request.url.indexOf(base_url) > -1){
-      // me-return response dan menyimpan request ke cache
-      event.respondWith(
-         caches.open(CACHE_NAME)
-         .then(cache => {
-            return fetch(event.request)
-            .then(response => {
-               cache.put(event.request.url, response.clone());
-               return response;
-            })
+registerRoute(
+   /^https:\/\/fonts\.googleapis\.com/,
+   new StaleWhileRevalidate({
+      cacheName: 'Google-font',
+      plugins: [
+         new CacheableResponsePlugin({
+            statuses: [0, 200]
+         }),
+         new ExpirationPlugin({
+            maxAgeSeconds: 7 * 24 * 60 * 60
          })
-      );
-   } else {
-      event.respondWith(
-         caches.match(event.request, {ignoreSearch: true})
-         .then(response => {
-            return response || fetch(event.request);
+      ]
+   })
+);
+
+registerRoute(
+   /^https:\/\/fonts\.gstatic\.com/,
+   new StaleWhileRevalidate({
+      cacheName: 'Google-icon',
+      plugins: [
+         new CacheableResponsePlugin({
+            statuses: [0, 200]
+         }),
+         new ExpirationPlugin({
+            maxAgeSeconds: 7 * 24 * 60 * 60
          })
-      );
-   }
-});
+      ]
+   })
+);
 
-self.addEventListener("fetch", event => {
-   console.log(`Memproses request...`);
-   event.respondWith(
-      caches
-      .match(event.request, {cacheName: CACHE_NAME})
-      .then(response => {
-         if(response){
-            console.log(`ServiceWorker: Gunakan dari cache: ${response.url}`);
-            return response;
-         }
-
-         console.log(`ServiceWorker: Memuat aset dari server: ${event.request.url}`);
-         return fetch(event.request);
-      })
-   );
-});
-
-
-self.addEventListener("activate", event => {
-   event.waitUntil(
-      caches.keys()
-      .then(cacheNames => {
-         return Promise.all(
-            cacheNames.map(cacheName => {
-               if(cacheName != CACHE_NAME){
-                  console.log(`ServiceWorker: cache ${cacheName} dihapus.`);
-                  return caches.delete(cacheName);
-               }
-            })
-         );
-      })
-   );
-});
+registerRoute(
+   new RegExp('https://api.football-data.org/v2'),
+   new NetworkFirst({
+      cacheName: 'data-from-api',
+      plugins: [
+         new CacheableResponsePlugin({
+            statuses: [0, 200]
+         }),
+         new ExpirationPlugin({
+            maxAgeSeconds: 2 * 24 * 60 * 60
+         })
+      ]
+   })
+);
 
 self.addEventListener('push', event => {
    let body;
